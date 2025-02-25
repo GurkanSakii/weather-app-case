@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
-import styled, { createGlobalStyle } from "styled-components";
+import styled from "styled-components";
 import { fetchWeatherData, fetchForecastData } from "../utils/api";
 
 import History from "../components/History";
 import ForeCast from "../components/ForeCast";
 import SearchBar from "../components/SearchBar";
 import WeatherCard from "../components/WeatherCard";
+import GlobalStyle from "../style/globalStyle";
 
 const weatherImages = {
   Fog: "/images/fog.jpg",
@@ -87,20 +88,6 @@ export async function getStaticProps() {
     revalidate: 3600,
   };
 }
-
-const GlobalStyle = createGlobalStyle`
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    text-align: center;
-  }
-
-  h1,h3 {
-    color: #fff;
-  }
-`;
-
 const BackgroundWrapper = styled.div`
   position: fixed;
   width: 100%;
