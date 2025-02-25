@@ -4,7 +4,7 @@ const ForeCast = ({ forecast, unit }) => {
   const dailyForecasts = forecast.list.slice(3).filter((_, index) => index % 8 === 0);
 
   const convertTemperature = (temp) => {
-    return unit === "metric" ? temp : (temp * 9) / 5 + 32;
+    return unit === "metric" ? temp : ((temp * 9) / 5 + 32).toFixed(2);
   };
 
   return (

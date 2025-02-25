@@ -8,7 +8,7 @@ const WeatherCard = ({ weather, unit }) => {
     if (unit === "metric") {
       setTemperature(weather.main.temp);
     } else {
-      setTemperature((weather.main.temp * 9) / 5 + 32);
+      setTemperature(((weather.main.temp * 9) / 5 + 32).toFixed(2));
     }
   }, [weather.main.temp, unit]);
 
