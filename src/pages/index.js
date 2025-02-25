@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { fetchWeatherData, fetchForecastData } from "../utils/api";
 
 import History from "../components/History";
@@ -41,16 +41,20 @@ export default function Home({ initialWeather }) {
     setUnit(unit === "metric" ? "imperial" : "metric");
   };
 
-  const { data: weather, error } = useQuery({
-    queryKey: ["weather", city, unit],
-    queryFn: () => fetchWeatherData(city, unit),
+  const {
+    data: weather,
+    error,
+    isLoading: isWeatherLoading,
+  } = useQuery({
+    queryKey: ["weather", city],
+    queryFn: () => fetchWeatherData(city),
     enabled: !!city,
     retry: false,
   });
 
-  const { data: forecast } = useQuery({
-    queryKey: ["forecast", city, unit],
-    queryFn: () => fetchForecastData(city, unit),
+  const { data: forecast, isLoading: isForecastLoading } = useQuery({
+    queryKey: ["forecast", city],
+    queryFn: () => fetchForecastData(city),
     enabled: !!city,
     retry: false,
   });
@@ -67,14 +71,30 @@ export default function Home({ initialWeather }) {
       <Container>
         <h1>Weather App</h1>
         <SearchBar onSearch={handleSearch} />
+
         {error && <ErrorMessage>Hata: {error.message}</ErrorMessage>}
-        {weather && (
-          <>
-            <ToggleButton onClick={toggleUnit}>{unit === "metric" ? "Switch to °F" : "Switch to °C"}</ToggleButton>
-            <WeatherCard weather={weather} unit={unit} />
-          </>
+
+        {isWeatherLoading ? (
+          <SpinnerWrapper>
+            <Spinner />
+          </SpinnerWrapper>
+        ) : (
+          weather && (
+            <>
+              <ToggleButton onClick={toggleUnit}>{unit === "metric" ? "Switch to °F" : "Switch to °C"}</ToggleButton>
+              <WeatherCard weather={weather} unit={unit} />
+            </>
+          )
         )}
-        {forecast && <ForeCast forecast={forecast} unit={unit} />}
+
+        {isForecastLoading ? (
+          <SpinnerWrapper>
+            <Spinner />
+          </SpinnerWrapper>
+        ) : (
+          forecast && <ForeCast forecast={forecast} unit={unit} />
+        )}
+
         {history.length > 0 && <History history={history} onSearch={handleSearch} />}
       </Container>
     </>
@@ -88,6 +108,7 @@ export async function getStaticProps() {
     revalidate: 3600,
   };
 }
+
 const BackgroundWrapper = styled.div`
   position: fixed;
   width: 100%;
@@ -115,10 +136,33 @@ const ToggleButton = styled.button`
     background: #218838;
   }
 `;
+
 const ErrorMessage = styled.p`
   color: red;
   font-size: 18px;
   font-weight: bold;
   margin: 10px 0;
   text-transform: capitalize;
+`;
+
+const SpinnerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 225px;
+`;
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const Spinner = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 6px solid rgba(0, 0, 0, 0.1);
+  border-top: 6px solid #fff;
+  border-radius: 50%;
+  animation: ${spin} 1s linear infinite;
 `;

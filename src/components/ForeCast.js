@@ -1,7 +1,11 @@
 import styled from "styled-components";
 
 const ForeCast = ({ forecast, unit }) => {
-  const dailyForecasts = forecast.list.filter((_, index) => index % 8 === 0);
+  const dailyForecasts = forecast.list.slice(3).filter((_, index) => index % 8 === 0);
+
+  const convertTemperature = (temp) => {
+    return unit === "metric" ? temp : (temp * 9) / 5 + 32;
+  };
 
   return (
     <ForecastContainer>
@@ -12,7 +16,7 @@ const ForeCast = ({ forecast, unit }) => {
             <ForecastItem key={index}>
               <p>{new Date(day.dt * 1000).toLocaleDateString()}</p>
               <p>
-                Temp: {day.main.temp} {unit === "metric" ? "°C" : "°F"}
+                Temp: {convertTemperature(day.main.temp)} {unit === "metric" ? "°C" : "°F"}
               </p>
               <p>{day.weather[0].description}</p>
             </ForecastItem>

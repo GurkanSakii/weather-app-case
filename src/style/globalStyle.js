@@ -7,5 +7,9 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Arial', sans-serif;
     text-align: center;
   }
+
+  h1,h3 {
+  color: #fff;
+  }
 `;
 export default GlobalStyle;
